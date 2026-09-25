@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: >
+          xcodebuild -project Peekie.xcodeproj -scheme Peekie -configuration Release
+          -derivedDataPath build CODE_SIGN_IDENTITY=- build
+
+      - name: Logic tests
+        run: ./scripts/test.sh logic
+
+      - name: Editor tests
+        run: ./scripts/test.sh editor
+        continue-on-error: true
+
+      - name: Window tests
+        run: ./scripts/test.sh window
+        continue-on-error: true

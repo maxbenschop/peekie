@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the DMG
+        run: ./scripts/make-dmg.sh
+
+      - name: Checksum
+        run: |
+          cd dist
+          shasum -a 256 *.dmg > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE=""
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            PRERELEASE="--prerelease"
+          fi
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/*.dmg dist/SHA256SUMS.txt --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/*.dmg dist/SHA256SUMS.txt \
+              --title "Peekie ${GITHUB_REF_NAME#v}" --generate-notes $PRERELEASE
+          fi
