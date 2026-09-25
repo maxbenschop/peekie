@@ -2,11 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.1] - 2026-09-25
 
 ### Changed
-- New app icon and menu bar icon, designed as a matching pair.
-- Refreshed the README banner to match.
+- New app icon and menu bar icon, designed as a matching pair. There are no functional changes.
+- Refreshed the README banner and social preview to match.
 
 ## [1.0.0] - 2026-09-25
 
@@ -23,4 +23,5 @@ First public release.
 - Keep on top, click-away behaviour (stay, fade or hide), an optional menu bar icon and launch at login.
 - Rebindable shortcuts.
 
+[1.0.1]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.1
 [1.0.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.0
