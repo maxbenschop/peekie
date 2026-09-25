@@ -11,3 +11,5 @@ trap 'rm -rf "$WORK"' EXIT
 
 swiftc -o "$WORK/make-banner" assets/make-banner.swift
 "$WORK/make-banner" assets/icon.png assets/banner.png
+
+sips -z 640 1280 assets/banner.png --out assets/social-preview.png > /dev/null
