@@ -68,6 +68,15 @@ The tests run in their own process with a temporary folder and their own setting
 
 Write commit messages in the imperative mood ("Fix image size on restore", not "Fixed"). Keep pull requests focused: one change per pull request is easier to review and easier to revert.
 
+## Branches and releases
+
+The project is trunk-based:
+
+- `main` is always in a working state, and is protected. Changes reach it through pull requests, and CI has to pass.
+- Work happens on short-lived branches such as `fix-image-size` or `add-export`, created from `main`.
+- Releases are tags on `main`. Pushing a tag like `v1.1.0` builds the DMG and publishes the release.
+- A tag with a suffix, like `v1.1.0-beta.1` or `v1.1.0-rc.1`, is published as a pre-release, which is how changes get tried before a full release.
+
 ## Reporting bugs
 
 Open an issue with the bug report template. Include your macOS version, your Mac type and the Peekie version (open the Peekie menu while Settings is open and choose **About Peekie**). Steps to reproduce matter most.
