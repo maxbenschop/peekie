@@ -7,6 +7,7 @@ func runLogicTests() {
     exporterTests()
     shortcutTests()
     storeTests()
+    menuBarIconTests()
 }
 
 @MainActor
@@ -217,4 +218,35 @@ private func storeTests() {
     store.save(id: UUID(), content: NSAttributedString(string: "keep me"), frame: frame, zoom: 0, pinned: false)
     store.deleteAll()
     check(!FileManager.default.fileExists(atPath: directory.path), "deleteAll removes the folder")
+}
+
+@MainActor
+private func menuBarIconTests() {
+    section("Menu bar icon")
+    let icon = MenuBarIcon.image()
+    check(icon.isTemplate, "the icon is a template image, so macOS tints it for light and dark menu bars")
+    check(icon.size == NSSize(width: 18, height: 18), "the icon is 18 by 18 points")
+
+    let scale = 4
+    guard let rep = NSBitmapImageRep(
+        bitmapDataPlanes: nil, pixelsWide: 18 * scale, pixelsHigh: 18 * scale, bitsPerSample: 8, samplesPerPixel: 4,
+        hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0
+    ), let context = NSGraphicsContext(bitmapImageRep: rep) else {
+        check(false, "the icon can be rendered")
+        return
+    }
+    NSGraphicsContext.saveGraphicsState()
+    NSGraphicsContext.current = context
+    icon.draw(in: NSRect(x: 0, y: 0, width: 18 * scale, height: 18 * scale))
+    NSGraphicsContext.restoreGraphicsState()
+
+    func alpha(atPointX x: CGFloat, y: CGFloat) -> CGFloat {
+        rep.colorAt(x: Int(x * CGFloat(scale)), y: 18 * scale - 1 - Int(y * CGFloat(scale)))?.alphaComponent ?? -1
+    }
+    check(alpha(atPointX: 9, y: 3.5) > 0.95 && alpha(atPointX: 3.0, y: 9) > 0.95 && alpha(atPointX: 9, y: 15) > 0.95, "the tile is solid")
+    check(alpha(atPointX: 5.4, y: 9.6) < 0.05 && alpha(atPointX: 10.4, y: 9.6) < 0.05, "the eyes are cut out of the tile")
+    check(alpha(atPointX: 7.05, y: 9.3) > 0.95 && alpha(atPointX: 12.05, y: 9.3) > 0.95, "each eye has a solid pupil")
+    check(alpha(atPointX: 9, y: 9.6) > 0.95, "a solid divider separates the eyes")
+    check(alpha(atPointX: 0.3, y: 0.3) < 0.05 && alpha(atPointX: 17.7, y: 17.7) < 0.05, "the corners are transparent")
+    check(alpha(atPointX: 2.3, y: 2.3) < 0.05, "the tile has rounded corners")
 }

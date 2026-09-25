@@ -28,6 +28,7 @@
 		1A00000000000000000000EB /* NoteExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000EA /* NoteExporter.swift */; };
 		1A00000000000000000000ED /* NoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000EC /* NoteStore.swift */; };
 		1A00000000000000000000EF /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000EE /* StatusItemController.swift */; };
+		1A00000000000000000000F1 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000F0 /* MenuBarIcon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		1A00000000000000000000EA /* NoteExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteExporter.swift; sourceTree = "<group>"; };
 		1A00000000000000000000EC /* NoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteStore.swift; sourceTree = "<group>"; };
 		1A00000000000000000000EE /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
+		1A00000000000000000000F0 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 				1A00000000000000000000EA /* NoteExporter.swift */,
 				1A00000000000000000000EC /* NoteStore.swift */,
 				1A00000000000000000000EE /* StatusItemController.swift */,
+				1A00000000000000000000F0 /* MenuBarIcon.swift */,
 				1A0000000000000000000032 /* AppIcon.icon */,
 			);
 			path = Peekie;
@@ -193,6 +196,7 @@
 				1A00000000000000000000E1 /* MenuBuilder.swift in Sources */,
 				1A00000000000000000000FF /* NoteModel.swift in Sources */,
 				1A00000000000000000000FD /* NoteTextEditor.swift in Sources */,
+				1A00000000000000000000F1 /* MenuBarIcon.swift in Sources */,
 				1A00000000000000000000EF /* StatusItemController.swift in Sources */,
 				1A00000000000000000000ED /* NoteStore.swift in Sources */,
 				1A00000000000000000000EB /* NoteExporter.swift in Sources */,

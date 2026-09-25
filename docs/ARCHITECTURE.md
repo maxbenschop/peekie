@@ -20,7 +20,7 @@ Peekie is a small AppKit and SwiftUI app with no third-party dependencies. This 
 | `HotKey.swift`, `QuickCapture.swift` | Global shortcuts and selection capture |
 | `Preferences.swift` | Preference keys, defaults, shortcut definitions |
 | `SettingsView.swift`, `ShortcutRecorder.swift` | The Settings window and shortcut recording |
-| `StatusItemController.swift` | The optional menu bar icon |
+| `StatusItemController.swift`, `MenuBarIcon.swift` | The optional menu bar item and its icon |
 | `MenuBuilder.swift`, `LoginItem.swift` | Shared menu items, launch at login |
 
 ## App lifecycle
@@ -105,6 +105,10 @@ Closing a note deletes its files, except when the app is quitting, when every op
 ## Quick capture
 
 `QuickCapture` posts `⌘C` to the frontmost app with `CGEvent`, which needs the Accessibility permission. It saves the clipboard first, waits for the pasteboard change count to move, reads the text, and restores the clipboard. If the change count never moves, nothing was selected and the clipboard is left alone.
+
+## Icons
+
+The app icon is an Icon Composer document (`AppIcon.icon`) made of two vector layers: a white tile with the eyes cut out, and the pupils. The menu bar icon is the same mascot simplified, drawn in code by `MenuBarIcon` as a template image at 18 by 18 points, so macOS tints it for light and dark menu bars and it stays sharp at any scale. The eyes are cut out of the tile with the clear compositing operation. `scripts/make-assets.sh` exports the app icon to PNG and rebuilds the README banner from it, so changing the icon updates the banner too.
 
 ## Settings
 

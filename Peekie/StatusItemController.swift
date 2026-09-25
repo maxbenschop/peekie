@@ -10,7 +10,7 @@ final class StatusItemController: NSObject {
         let wanted = UserDefaults.standard.bool(forKey: PrefKey.showMenuBarIcon)
         if wanted, statusItem == nil {
             let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-            item.button?.image = NSImage(systemSymbolName: "note.text", accessibilityDescription: "Peekie")
+            item.button?.image = MenuBarIcon.image()
             item.button?.toolTip = "Peekie"
             item.menu = makeMenu()
             statusItem = item
