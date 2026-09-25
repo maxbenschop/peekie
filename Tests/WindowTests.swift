@@ -286,9 +286,11 @@ private func imageWindowTests() {
     check(abs(drawnImageWidth(of: textView) - firstWidth()) < 3, "and is drawn at that width (drawn \(drawnImageWidth(of: textView)), bounds \(firstWidth()))")
     setSize(4)
     check(firstWidth() <= maxWidth() + 0.5, "Actual Size is capped to the note (\(firstWidth()) of \(maxWidth()))")
+    let expectedMedium = maxWidth() * 0.5
     setSize(2)
+    check(abs(firstWidth() - expectedMedium) < 1, "Medium applies again (\(firstWidth()) of \(expectedMedium))")
     let widths = textView.imageWidths()
-    check(widths.count == 2 && abs(widths[0] - maxWidth() * 0.5) < 1, "image widths are reported in order (\(widths), note width \(textView.bounds.width))")
+    check(widths.count == 2 && abs(widths[0] - firstWidth()) < 0.01, "image widths are reported in order (\(widths))")
 
     let directory = temporaryDirectory("images")
     let store = NoteStore(directory: directory)
