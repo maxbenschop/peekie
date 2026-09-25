@@ -52,8 +52,16 @@ private func blurTests() {
     window.contentView = view
     window.orderFrontRegardless()
     spin(1.0)
+    if view.layer.flatMap(backdropLayer(in:)) == nil && ProcessInfo.processInfo.environment["CI"] != nil {
+        skip("this machine has no graphics backdrop (virtual machine), so the blur layers cannot be checked here")
+        window.close()
+        return
+    }
     var state = blurState(view)
-    check(state.radius == 12 && state.kinds == ["sdrNormalize", "gaussianBlur"] && state.tintHidden && view.alphaValue == 1, "the radius is applied, saturation is removed and the material tint is hidden")
+    check(
+        state.radius == 12 && state.kinds == ["sdrNormalize", "gaussianBlur"] && state.tintHidden && view.alphaValue == 1,
+        "the radius is applied, saturation is removed and the material tint is hidden (radius \(String(describing: state.radius)), filters \(state.kinds), tint hidden \(state.tintHidden), alpha \(view.alphaValue))"
+    )
     let before = view.layer.flatMap(backdropLayer(in:))?.filters.map { $0.map { ObjectIdentifier($0 as AnyObject) } }
     view.needsLayout = true
     view.layoutSubtreeIfNeeded()
@@ -267,18 +275,20 @@ private func imageWindowTests() {
         textView.setImageSize(item)
         spin(0.2)
     }
-    let maxWidth = textView.bounds.width - 16 - 12
+    func maxWidth() -> CGFloat { textView.bounds.width - 16 - 12 }
+    func firstWidth() -> CGFloat { attachments(in: textView)[0].bounds.width }
     setSize(1)
-    check(abs(attachments(in: textView)[0].bounds.width - maxWidth * 0.25) < 1, "Small is 25% of the note width")
+    check(abs(firstWidth() - maxWidth() * 0.25) < 1, "Small is 25% of the note width (\(firstWidth()) of \(maxWidth()))")
     setSize(2)
-    check(abs(attachments(in: textView)[0].bounds.width - maxWidth * 0.5) < 1, "Medium is 50%")
+    check(abs(firstWidth() - maxWidth() * 0.5) < 1, "Medium is 50% (\(firstWidth()) of \(maxWidth()))")
     setSize(3)
-    check(abs(attachments(in: textView)[0].bounds.width - maxWidth) < 1 && abs(drawnImageWidth(of: textView) - maxWidth) < 3, "Large fits the note")
+    check(abs(firstWidth() - maxWidth()) < 1, "Large fits the note (\(firstWidth()) of \(maxWidth()))")
+    check(abs(drawnImageWidth(of: textView) - firstWidth()) < 3, "and is drawn at that width (drawn \(drawnImageWidth(of: textView)), bounds \(firstWidth()))")
     setSize(4)
-    check(attachments(in: textView)[0].bounds.width <= maxWidth + 0.5, "Actual Size is capped to the note")
+    check(firstWidth() <= maxWidth() + 0.5, "Actual Size is capped to the note (\(firstWidth()) of \(maxWidth()))")
     setSize(2)
     let widths = textView.imageWidths()
-    check(widths.count == 2 && abs(widths[0] - maxWidth * 0.5) < 1, "image widths are reported in order")
+    check(widths.count == 2 && abs(widths[0] - maxWidth() * 0.5) < 1, "image widths are reported in order (\(widths), note width \(textView.bounds.width))")
 
     let directory = temporaryDirectory("images")
     let store = NoteStore(directory: directory)

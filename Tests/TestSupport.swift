@@ -7,6 +7,10 @@ func check(_ condition: Bool, _ message: String) {
     if !condition { failures += 1 }
 }
 
+func skip(_ message: String) {
+    FileHandle.standardError.write(("SKIP " + message + "\n").data(using: .utf8)!)
+}
+
 func section(_ title: String) {
     FileHandle.standardError.write(("\n" + title + "\n").data(using: .utf8)!)
 }
