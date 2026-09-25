@@ -9,7 +9,7 @@ jobs:
   build-and-test:
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build
         run: >
@@ -21,8 +21,6 @@ jobs:
 
       - name: Editor tests
         run: ./scripts/test.sh editor
-        continue-on-error: true
 
       - name: Window tests
         run: ./scripts/test.sh window
-        continue-on-error: true
