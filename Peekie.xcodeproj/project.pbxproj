@@ -1,0 +1,318 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1A0000000000000000000065 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000001 /* main.swift */; };
+		1A0000000000000000000066 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000002 /* AppDelegate.swift */; };
+		1A0000000000000000000067 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000003 /* Preferences.swift */; };
+		1A0000000000000000000068 /* HotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000004 /* HotKey.swift */; };
+		1A0000000000000000000069 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000005 /* LoginItem.swift */; };
+		1A000000000000000000006B /* NoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000007 /* NoteView.swift */; };
+		1A000000000000000000006C /* NoteWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000008 /* NoteWindow.swift */; };
+		1A000000000000000000006D /* NoteWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000009 /* NoteWindowController.swift */; };
+		1A000000000000000000006E /* ShortcutRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000000A /* ShortcutRecorder.swift */; };
+		1A000000000000000000006F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000000000000000000000B /* SettingsView.swift */; };
+		1A0000000000000000000096 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000000000000000000032 /* AppIcon.icon */; };
+		1A00000000000000000000FD /* NoteTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000FC /* NoteTextEditor.swift */; };
+		1A00000000000000000000FF /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000FE /* NoteModel.swift */; };
+		1A00000000000000000000E1 /* MenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000E0 /* MenuBuilder.swift */; };
+		1A00000000000000000000E3 /* QuickCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000E2 /* QuickCapture.swift */; };
+		1A00000000000000000000E5 /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000E4 /* VisualEffectView.swift */; };
+		1A00000000000000000000E7 /* MathEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000E6 /* MathEvaluator.swift */; };
+		1A00000000000000000000E9 /* CodeHighlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000E8 /* CodeHighlighter.swift */; };
+		1A00000000000000000000EB /* NoteExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000EA /* NoteExporter.swift */; };
+		1A00000000000000000000ED /* NoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000EC /* NoteStore.swift */; };
+		1A00000000000000000000EF /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00000000000000000000EE /* StatusItemController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1A0000000000000000000001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		1A0000000000000000000002 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1A0000000000000000000003 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		1A0000000000000000000004 /* HotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKey.swift; sourceTree = "<group>"; };
+		1A0000000000000000000005 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
+		1A0000000000000000000007 /* NoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteView.swift; sourceTree = "<group>"; };
+		1A0000000000000000000008 /* NoteWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteWindow.swift; sourceTree = "<group>"; };
+		1A0000000000000000000009 /* NoteWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteWindowController.swift; sourceTree = "<group>"; };
+		1A000000000000000000000A /* ShortcutRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorder.swift; sourceTree = "<group>"; };
+		1A000000000000000000000B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1A0000000000000000000032 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		1A000000000000000000003C /* Peekie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Peekie.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A00000000000000000000FC /* NoteTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTextEditor.swift; sourceTree = "<group>"; };
+		1A00000000000000000000FE /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
+		1A00000000000000000000E0 /* MenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBuilder.swift; sourceTree = "<group>"; };
+		1A00000000000000000000E2 /* QuickCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCapture.swift; sourceTree = "<group>"; };
+		1A00000000000000000000E4 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
+		1A00000000000000000000E6 /* MathEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathEvaluator.swift; sourceTree = "<group>"; };
+		1A00000000000000000000E8 /* CodeHighlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeHighlighter.swift; sourceTree = "<group>"; };
+		1A00000000000000000000EA /* NoteExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteExporter.swift; sourceTree = "<group>"; };
+		1A00000000000000000000EC /* NoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteStore.swift; sourceTree = "<group>"; };
+		1A00000000000000000000EE /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1A0000000000000000000053 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1A0000000000000000000046 = {
+			isa = PBXGroup;
+			children = (
+				1A0000000000000000000047 /* Peekie */,
+				1A0000000000000000000048 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1A0000000000000000000047 /* Peekie */ = {
+			isa = PBXGroup;
+			children = (
+				1A0000000000000000000001 /* main.swift */,
+				1A0000000000000000000002 /* AppDelegate.swift */,
+				1A0000000000000000000003 /* Preferences.swift */,
+				1A0000000000000000000004 /* HotKey.swift */,
+				1A0000000000000000000005 /* LoginItem.swift */,
+				1A0000000000000000000007 /* NoteView.swift */,
+				1A0000000000000000000008 /* NoteWindow.swift */,
+				1A0000000000000000000009 /* NoteWindowController.swift */,
+				1A000000000000000000000A /* ShortcutRecorder.swift */,
+				1A000000000000000000000B /* SettingsView.swift */,
+				1A00000000000000000000E2 /* QuickCapture.swift */,
+				1A00000000000000000000E0 /* MenuBuilder.swift */,
+				1A00000000000000000000FE /* NoteModel.swift */,
+				1A00000000000000000000FC /* NoteTextEditor.swift */,
+				1A00000000000000000000E4 /* VisualEffectView.swift */,
+				1A00000000000000000000E6 /* MathEvaluator.swift */,
+				1A00000000000000000000E8 /* CodeHighlighter.swift */,
+				1A00000000000000000000EA /* NoteExporter.swift */,
+				1A00000000000000000000EC /* NoteStore.swift */,
+				1A00000000000000000000EE /* StatusItemController.swift */,
+				1A0000000000000000000032 /* AppIcon.icon */,
+			);
+			path = Peekie;
+			sourceTree = "<group>";
+		};
+		1A0000000000000000000048 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A000000000000000000003C /* Peekie.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1A0000000000000000000050 /* Peekie */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A0000000000000000000056 /* Build configuration list for PBXNativeTarget "Peekie" */;
+			buildPhases = (
+				1A0000000000000000000052 /* Sources */,
+				1A0000000000000000000053 /* Frameworks */,
+				1A0000000000000000000054 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Peekie;
+			productName = Peekie;
+			productReference = 1A000000000000000000003C /* Peekie.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1A0000000000000000000051 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					1A0000000000000000000050 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = 1A0000000000000000000055 /* Build configuration list for PBXProject "Peekie" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1A0000000000000000000046;
+			productRefGroup = 1A0000000000000000000048 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1A0000000000000000000050 /* Peekie */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1A0000000000000000000054 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A0000000000000000000096 /* AppIcon.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1A0000000000000000000052 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A0000000000000000000065 /* main.swift in Sources */,
+				1A0000000000000000000066 /* AppDelegate.swift in Sources */,
+				1A0000000000000000000067 /* Preferences.swift in Sources */,
+				1A0000000000000000000068 /* HotKey.swift in Sources */,
+				1A0000000000000000000069 /* LoginItem.swift in Sources */,
+				1A000000000000000000006B /* NoteView.swift in Sources */,
+				1A000000000000000000006C /* NoteWindow.swift in Sources */,
+				1A000000000000000000006D /* NoteWindowController.swift in Sources */,
+				1A000000000000000000006E /* ShortcutRecorder.swift in Sources */,
+				1A000000000000000000006F /* SettingsView.swift in Sources */,
+				1A00000000000000000000E3 /* QuickCapture.swift in Sources */,
+				1A00000000000000000000E1 /* MenuBuilder.swift in Sources */,
+				1A00000000000000000000FF /* NoteModel.swift in Sources */,
+				1A00000000000000000000FD /* NoteTextEditor.swift in Sources */,
+				1A00000000000000000000EF /* StatusItemController.swift in Sources */,
+				1A00000000000000000000ED /* NoteStore.swift in Sources */,
+				1A00000000000000000000EB /* NoteExporter.swift in Sources */,
+				1A00000000000000000000E9 /* CodeHighlighter.swift in Sources */,
+				1A00000000000000000000E7 /* MathEvaluator.swift in Sources */,
+				1A00000000000000000000E5 /* VisualEffectView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1A000000000000000000005A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1A000000000000000000005B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		1A000000000000000000005C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Peekie;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.peekie.Peekie;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				REGISTER_APP_GROUPS = NO;
+			};
+			name = Debug;
+		};
+		1A000000000000000000005D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Peekie;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.peekie.Peekie;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				REGISTER_APP_GROUPS = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1A0000000000000000000055 /* Build configuration list for PBXProject "Peekie" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A000000000000000000005A /* Debug */,
+				1A000000000000000000005B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A0000000000000000000056 /* Build configuration list for PBXNativeTarget "Peekie" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A000000000000000000005C /* Debug */,
+				1A000000000000000000005D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1A0000000000000000000051 /* Project object */;
+}
