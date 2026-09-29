@@ -19,11 +19,16 @@ Peekie is guided by a few principles. Changes that fit them are much easier to a
 
 You need macOS 14 or later and Xcode 26 or later.
 
+1. Fork this repository on GitHub (the **Fork** button, top right of the repo page).
+2. Clone your fork, replacing `your-username` with your own GitHub username:
+
 ```sh
-git clone https://github.com/<your-username>/peekie.git
+git clone https://github.com/your-username/peekie.git
 cd peekie
 open Peekie.xcodeproj
 ```
+
+You push branches and open pull requests from your fork; you don't need write access to this repository for that.
 
 Or build and install from the command line:
 
@@ -61,10 +66,10 @@ The tests run in their own process with a temporary folder and their own setting
 
 ## Pull requests
 
-1. Fork the repository and create a branch from `main`.
+1. Create a branch from `main` in your fork.
 2. Make your change, with tests.
 3. Run `./scripts/test.sh all` and make sure the app builds with `xcodebuild -project Peekie.xcodeproj -scheme Peekie -configuration Release build`.
-4. Open a pull request and fill in the template. A screenshot or short recording helps a lot for anything visual.
+4. Open a pull request against `maxbenschop/peekie:main` and fill in the template. A screenshot or short recording helps a lot for anything visual.
 
 Write commit messages in the imperative mood ("Fix image size on restore", not "Fixed"). Keep pull requests focused: one change per pull request is easier to review and easier to revert.
 
