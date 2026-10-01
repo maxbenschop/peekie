@@ -57,7 +57,7 @@ func makeTextView(width: CGFloat = 400, height: CGFloat = 300) -> NoteTextView {
     textView.allowsUndo = true
     textView.importsGraphics = true
     textView.drawsBackground = false
-    textView.textContainerInset = NSSize(width: 8, height: 6)
+    textView.textContainerInset = NSSize(width: 8, height: 8)
     textView.applyFont(size: 13, monospaced: false)
     textView.typingAttributes = [
         .font: textView.font(NoteTextView.Style()),
@@ -96,6 +96,22 @@ func attribute(_ textView: NoteTextView, _ needle: String, _ key: NSAttributedSt
 }
 
 @MainActor
+func checklistText(_ textView: NoteTextView) -> String {
+    NoteExporter.plainText(textView.textStorage ?? NSAttributedString())
+}
+
+/// The bounding rect, in `textView`'s own view coordinates, of the glyphs for
+/// `characterRange` — i.e. where to look when sampling rendered pixels with
+/// `drawnInkRowRange`.
+@MainActor
+func glyphViewRect(of textView: NoteTextView, characterRange: NSRange) -> NSRect {
+    guard let layoutManager = textView.layoutManager, let container = textView.textContainer else { return .zero }
+    let glyphs = layoutManager.glyphRange(forCharacterRange: characterRange, actualCharacterRange: nil)
+    let rect = layoutManager.boundingRect(forGlyphRange: glyphs, in: container)
+    return rect.offsetBy(dx: textView.textContainerOrigin.x, dy: textView.textContainerOrigin.y)
+}
+
+@MainActor
 func attachments(in textView: NoteTextView) -> [NSTextAttachment] {
     var found: [NSTextAttachment] = []
     guard let storage = textView.textStorage else { return found }
@@ -121,6 +137,33 @@ func drawnBrightness(of textView: NoteTextView) -> CGFloat {
         }
     }
     return count == 0 ? -1 : sum / count
+}
+
+/// The vertical pixel extent (top, bottom) of anything actually rendered within
+/// `xRange` (in view points) of `textView`'s real, on-screen drawing — i.e. ground
+/// truth for where glyphs/attachments land, not where layout APIs claim they land.
+/// Returns `nil` if nothing was drawn in that column range. Row 0 is the top of the
+/// bitmap (matches `NSBitmapImageRep`'s `colorAt` convention for a flipped, cached
+/// view like `NSTextView`), so a *smaller* `top` means visually higher on screen.
+@MainActor
+func drawnInkRowRange(of textView: NoteTextView, xRange: Range<CGFloat>) -> (top: Int, bottom: Int)? {
+    textView.layoutManager?.ensureLayout(for: textView.textContainer!)
+    textView.display()
+    let rep = textView.bitmapImageRepForCachingDisplay(in: textView.bounds)!
+    textView.cacheDisplay(in: textView.bounds, to: rep)
+    let scale = CGFloat(rep.pixelsWide) / textView.bounds.width
+    let xStart = Int(xRange.lowerBound * scale)
+    let xEnd = min(rep.pixelsWide, Int(xRange.upperBound * scale))
+    var minY = Int.max
+    var maxY = -1
+    for y in 0..<rep.pixelsHigh {
+        for x in xStart..<xEnd {
+            guard let color = rep.colorAt(x: x, y: y), color.alphaComponent > 0.3 else { continue }
+            minY = min(minY, y)
+            maxY = max(maxY, y)
+        }
+    }
+    return maxY < 0 ? nil : (minY, maxY)
 }
 
 @MainActor

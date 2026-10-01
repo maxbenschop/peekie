@@ -275,7 +275,7 @@ private func imageWindowTests() {
         textView.setImageSize(item)
         spin(0.2)
     }
-    func maxWidth() -> CGFloat { textView.bounds.width - 16 - 12 }
+    func maxWidth() -> CGFloat { textView.bounds.width - 16 - 8 }
     func firstWidth() -> CGFloat { attachments(in: textView)[0].bounds.width }
     setSize(1)
     check(abs(firstWidth() - maxWidth() * 0.25) < 1, "Small is 25% of the note width (\(firstWidth()) of \(maxWidth()))")
@@ -309,7 +309,7 @@ private func imageWindowTests() {
         check(abs(attachments(in: restoredView)[0].bounds.width - sizes[0]) < 1, "widening the note leaves image sizes alone")
         restored.setFrame(NSRect(x: 50, y: 50, width: 240, height: 400), display: true)
         spin(0.5)
-        check(attachments(in: restoredView)[0].bounds.width <= restoredView.bounds.width - 16 - 12 + 0.5, "narrowing the note keeps images inside it")
+        check(attachments(in: restoredView)[0].bounds.width <= restoredView.bounds.width - 16 - 8 + 0.5, "narrowing the note keeps images inside it")
     }
     restored.close()
     try? FileManager.default.removeItem(at: directory)

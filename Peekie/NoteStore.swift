@@ -47,7 +47,7 @@ final class NoteStore {
                 at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700]
             )
 
-            let portable = NoteTextView.strippingDefaultColour(from: content)
+            let portable = ChecklistBox.preparedForEncoding(NoteTextView.strippingDefaultColour(from: content))
             guard let data = portable.rtfd(from: NSRange(location: 0, length: portable.length), documentAttributes: [:]) else { return }
             try data.write(to: noteURL(id), options: .atomic)
 

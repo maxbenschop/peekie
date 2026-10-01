@@ -13,10 +13,9 @@ final class NoteTextView: NSTextView {
     ]
 
     static let defaultColour = NSColor.labelColor
+    static let mathResultColour = NSColor(red: 0xA9 / 255, green: 0xA3 / 255, blue: 0xF0 / 255, alpha: 1)
 
     private static let bullet = "•"
-    private static let unchecked = "☐"
-    private static let checked = "☑"
 
     var stateDidChange: (() -> Void)?
 
@@ -86,10 +85,23 @@ final class NoteTextView: NSTextView {
         zoomDelta = zoom
         textStorage?.setAttributedString(content)
         applyDefaultColour()
+        refreshChecklistAttachments()
         if let imageWidths { applyImageWidths(imageWidths) }
         normalizeAttachments()
         rebuildFonts()
         setSelectedRange(NSRange(location: content.length, length: 0))
+    }
+
+    /// Re-renders checklist boxes reloaded from disk so they always match the current
+    /// design, and stay live (toggleable) even though RTFD round-trips them as plain
+    /// NSTextAttachments rather than our own type.
+    private func refreshChecklistAttachments() {
+        guard let storage = textStorage, storage.length > 0 else { return }
+        storage.enumerateAttribute(.attachment, in: NSRange(location: 0, length: storage.length)) { value, range, _ in
+            guard let attachment = value as? NSTextAttachment, let checked = ChecklistBox.checkedState(of: attachment) else { return }
+            let runFont = storage.attribute(.font, at: range.location, effectiveRange: nil) as? NSFont
+            ChecklistBox.apply(checked: checked, font: runFont ?? font(.init()), to: attachment)
+        }
     }
 
     private var monoFont: NSFont { .monospacedSystemFont(ofSize: fontSize, weight: .regular) }
@@ -261,7 +273,8 @@ final class NoteTextView: NSTextView {
         let menu = super.menu(for: event) ?? NSMenu()
         let point = convert(event.locationInWindow, from: nil)
         if let index = characterIndex(at: point),
-           textStorage?.attribute(.attachment, at: index, effectiveRange: nil) is NSTextAttachment {
+           let attachment = textStorage?.attribute(.attachment, at: index, effectiveRange: nil) as? NSTextAttachment,
+           ChecklistBox.checkedState(of: attachment) == nil {
             let sizes = NSMenu(title: "Image Size")
             for (title, tag) in [("Small", 1), ("Medium", 2), ("Large (fit note)", 3), ("Actual Size", 4)] {
                 let item = NSMenuItem(title: title, action: #selector(setImageSize(_:)), keyEquivalent: "")
@@ -316,7 +329,10 @@ final class NoteTextView: NSTextView {
         guard caret.location == contentsEnd else { return }
         let before = ns.substring(with: NSRange(location: line.location, length: caret.location - 1 - line.location))
         guard let result = MathEvaluator.result(forLineEndingIn: before) else { return }
+        let insertionStart = caret.location
         super.insertText(" " + result, replacementRange: selectedRange())
+        let resultRange = NSRange(location: insertionStart + 1, length: (result as NSString).length)
+        textStorage?.addAttribute(.foregroundColor, value: Self.mathResultColour, range: resultRange)
     }
 
     private func convertListPrefixIfNeeded() {
@@ -327,14 +343,16 @@ final class NoteTextView: NSTextView {
         let prefixRange = NSRange(location: line.location, length: caret - line.location)
         guard prefixRange.length > 0 else { return }
 
-        let replacement: String
         switch ns.substring(with: prefixRange) {
-        case "- ", "* ": replacement = Self.bullet + " "
-        case "[] ", "[ ] ": replacement = Self.unchecked + " "
-        default: return
+        case "- ", "* ":
+            let replacement = Self.bullet + " "
+            replace(prefixRange, with: replacement)
+            setSelectedRange(NSRange(location: line.location + (replacement as NSString).length, length: 0))
+        case "[] ", "[ ] ":
+            insertChecklistItem(at: prefixRange)
+        default:
+            return
         }
-        replace(prefixRange, with: replacement)
-        setSelectedRange(NSRange(location: line.location + (replacement as NSString).length, length: 0))
     }
 
     private func replace(_ range: NSRange, with text: String) {
@@ -359,12 +377,9 @@ final class NoteTextView: NSTextView {
         ns.getLineStart(nil, end: nil, contentsEnd: &contentsEnd, for: line)
         let text = ns.substring(with: NSRange(location: line.location, length: contentsEnd - line.location))
 
-        let marker: String
-        if text.hasPrefix(Self.bullet + " ") {
-            marker = Self.bullet
-        } else if text.hasPrefix(Self.unchecked + " ") || text.hasPrefix(Self.checked + " ") {
-            marker = Self.unchecked
-        } else {
+        let isBullet = text.hasPrefix(Self.bullet + " ")
+        let isChecklist = !isBullet && text.hasPrefix("\u{FFFC} ") && lineStartsWithChecklist(line.location)
+        guard isBullet || isChecklist else {
             super.insertNewline(sender)
             return
         }
@@ -379,7 +394,31 @@ final class NoteTextView: NSTextView {
         }
         super.insertNewline(sender)
         typingAttributes.removeValue(forKey: .strikethroughStyle)
-        super.insertText(marker + " ", replacementRange: selectedRange())
+        typingAttributes[.foregroundColor] = Self.defaultColour
+        if isBullet {
+            super.insertText(Self.bullet + " ", replacementRange: selectedRange())
+        } else {
+            insertChecklistItem(at: selectedRange())
+        }
+    }
+
+    private func lineStartsWithChecklist(_ location: Int) -> Bool {
+        guard let storage = textStorage, location < storage.length,
+              let attachment = storage.attribute(.attachment, at: location, effectiveRange: nil) as? NSTextAttachment
+        else { return false }
+        return ChecklistBox.checkedState(of: attachment) != nil
+    }
+
+    private func insertChecklistItem(at range: NSRange) {
+        guard shouldChangeText(in: range, replacementString: " ") else { return }
+        let itemFont = (typingAttributes[.font] as? NSFont) ?? font(.init())
+        let insertion = NSMutableAttributedString(attachment: ChecklistBox.attachment(checked: false, font: itemFont))
+        insertion.append(NSAttributedString(string: " "))
+        insertion.addAttribute(.font, value: itemFont, range: NSRange(location: 0, length: insertion.length))
+        insertion.addAttribute(.foregroundColor, value: Self.defaultColour, range: NSRange(location: 0, length: insertion.length))
+        textStorage?.replaceCharacters(in: range, with: insertion)
+        didChangeText()
+        setSelectedRange(NSRange(location: range.location + 2, length: 0))
     }
 
     override func mouseDown(with event: NSEvent) {
@@ -411,25 +450,35 @@ final class NoteTextView: NSTextView {
     }
 
     private func toggleCheckbox(at index: Int) -> Bool {
+        guard let storage = textStorage,
+              let attachment = storage.attribute(.attachment, at: index, effectiveRange: nil) as? NSTextAttachment,
+              let checked = ChecklistBox.checkedState(of: attachment)
+        else { return false }
+
         let ns = string as NSString
         let line = ns.lineRange(for: NSRange(location: index, length: 0))
         guard index == line.location else { return false }
-        let symbol = ns.substring(with: NSRange(location: index, length: 1))
-        guard symbol == Self.unchecked || symbol == Self.checked, let storage = textStorage else { return false }
 
         var contentsEnd = 0
         ns.getLineStart(nil, end: nil, contentsEnd: &contentsEnd, for: line)
-        let checking = symbol == Self.unchecked
+        let checking = !checked
         let lineRange = NSRange(location: index, length: contentsEnd - index)
         let rest = NSRange(location: index + 1, length: max(0, contentsEnd - index - 1))
+        let existingFont = storage.attribute(.font, at: index, effectiveRange: nil) as? NSFont
 
         guard shouldChangeText(in: lineRange, replacementString: nil) else { return true }
+        let replacement = NSMutableAttributedString(attachment: ChecklistBox.attachment(checked: checking, font: existingFont ?? font(.init())))
+        if let existingFont {
+            replacement.addAttribute(.font, value: existingFont, range: NSRange(location: 0, length: replacement.length))
+        }
         storage.beginEditing()
-        storage.replaceCharacters(in: NSRange(location: index, length: 1), with: checking ? Self.checked : Self.unchecked)
+        storage.replaceCharacters(in: NSRange(location: index, length: 1), with: replacement)
         if checking {
             storage.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: rest)
+            storage.addAttribute(.foregroundColor, value: NSColor.secondaryLabelColor, range: rest)
         } else {
             storage.removeAttribute(.strikethroughStyle, range: rest)
+            storage.addAttribute(.foregroundColor, value: Self.defaultColour, range: rest)
         }
         storage.endEditing()
         didChangeText()
@@ -464,7 +513,7 @@ final class NoteTextView: NSTextView {
         }
     }
 
-    private var maxImageWidth: CGFloat { max(60, bounds.width - textContainerInset.width * 2 - 12) }
+    private var maxImageWidth: CGFloat { max(60, bounds.width - textContainerInset.width * 2 - 8) }
 
     private var isLaidOut: Bool { bounds.width >= 100 }
 
@@ -509,7 +558,9 @@ final class NoteTextView: NSTextView {
         guard let storage = textStorage, storage.length > 0 else { return [] }
         var widths: [Double] = []
         storage.enumerateAttribute(.attachment, in: NSRange(location: 0, length: storage.length)) { value, _, _ in
-            if let attachment = value as? NSTextAttachment { widths.append(Double(attachment.bounds.width)) }
+            if let attachment = value as? NSTextAttachment, ChecklistBox.checkedState(of: attachment) == nil {
+                widths.append(Double(attachment.bounds.width))
+            }
         }
         return widths
     }
@@ -518,7 +569,7 @@ final class NoteTextView: NSTextView {
         guard let storage = textStorage, storage.length > 0 else { return }
         var index = 0
         storage.enumerateAttribute(.attachment, in: NSRange(location: 0, length: storage.length)) { value, range, _ in
-            guard let attachment = value as? NSTextAttachment else { return }
+            guard let attachment = value as? NSTextAttachment, ChecklistBox.checkedState(of: attachment) == nil else { return }
             defer { index += 1 }
             guard index < widths.count, widths[index] > 0, let image = resolvedImage(for: attachment),
                   image.size.width > 0 else { return }
@@ -531,7 +582,8 @@ final class NoteTextView: NSTextView {
     func normalizeAttachments() {
         guard isLaidOut, let storage = textStorage, storage.length > 0 else { return }
         storage.enumerateAttribute(.attachment, in: NSRange(location: 0, length: storage.length)) { value, range, _ in
-            guard let attachment = value as? NSTextAttachment, let image = resolvedImage(for: attachment) else { return }
+            guard let attachment = value as? NSTextAttachment, ChecklistBox.checkedState(of: attachment) == nil,
+                  let image = resolvedImage(for: attachment) else { return }
             var target: CGRect?
             if attachment.bounds == .zero {
                 target = defaultImageBounds(for: image.size)
@@ -718,7 +770,7 @@ struct NoteTextEditor: NSViewRepresentable {
         textView.importsGraphics = true
         textView.allowsUndo = true
         textView.drawsBackground = false
-        textView.textContainerInset = NSSize(width: 8, height: 6)
+        textView.textContainerInset = NSSize(width: 8, height: 8)
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticLinkDetectionEnabled = true
