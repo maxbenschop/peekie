@@ -103,7 +103,9 @@ private func codeBlockTests() {
 @MainActor
 private func exporterTests() {
     section("Export")
-    let note = NSMutableAttributedString(string: "• bold item\n☑ done task\nplain *star* and a link\n```py\nx = 1\n```\n")
+    let note = NSMutableAttributedString(string: "• bold item\n")
+    note.append(NSAttributedString(attachment: ChecklistBox.attachment(checked: true, font: .systemFont(ofSize: 13))))
+    note.append(NSAttributedString(string: " done task\nplain *star* and a link\n```py\nx = 1\n```\n"))
     let bold = NSFont.systemFont(ofSize: 13, weight: .bold)
     let italic = NSFontManager.shared.convert(NSFont.systemFont(ofSize: 13), toHaveTrait: .italicFontMask)
     let text = note.string as NSString

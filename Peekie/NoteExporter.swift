@@ -40,7 +40,7 @@ enum NoteExporter {
         case .markdown:
             try markdown(note).write(to: url, atomically: true, encoding: .utf8)
         case .rtf, .rtfd:
-            let portable = NoteTextView.strippingDefaultColour(from: note)
+            let portable = ChecklistBox.preparedForEncoding(NoteTextView.strippingDefaultColour(from: note))
             let range = NSRange(location: 0, length: portable.length)
             let type: NSAttributedString.DocumentType = format == .rtf ? .rtf : .rtfd
             let wrapper = try portable.fileWrapper(from: range, documentAttributes: [.documentType: type])
@@ -49,11 +49,22 @@ enum NoteExporter {
     }
 
     static func plainText(_ note: NSAttributedString) -> String {
-        note.string.replacingOccurrences(of: "\u{FFFC}", with: "")
+        var result = ""
+        let ns = note.string as NSString
+        note.enumerateAttribute(.attachment, in: NSRange(location: 0, length: note.length)) { value, range, _ in
+            if let attachment = value as? NSTextAttachment {
+                if let checked = ChecklistBox.checkedState(of: attachment) {
+                    result += checked ? "☑" : "☐"
+                }
+            } else {
+                result += ns.substring(with: range).replacingOccurrences(of: "\u{FFFC}", with: "")
+            }
+        }
+        return result
     }
 
     private static let listMarkers: [(marker: String, markdown: String)] = [
-        ("• ", "- "), ("☐ ", "- [ ] "), ("☑ ", "- [x] "),
+        ("• ", "- "),
     ]
 
     static func markdown(_ note: NSAttributedString) -> String {
@@ -72,6 +83,11 @@ enum NoteExporter {
                     prefix = match.markdown
                     content = NSRange(location: lineRange.location + (match.marker as NSString).length,
                                       length: lineRange.length - (match.marker as NSString).length)
+                } else if lineRange.length >= 2,
+                          let attachment = note.attribute(.attachment, at: lineRange.location, effectiveRange: nil) as? NSTextAttachment,
+                          let checked = ChecklistBox.checkedState(of: attachment) {
+                    prefix = checked ? "- [x] " : "- [ ] "
+                    content = NSRange(location: lineRange.location + 2, length: lineRange.length - 2)
                 }
             }
             output += prefix + (insideCode ? text.substring(with: content) : inline(note, range: content))

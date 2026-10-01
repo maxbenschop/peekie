@@ -5,6 +5,8 @@ func runEditorTests() {
     typingTests()
     listTests()
     checkboxTests()
+    checkboxAlignmentTests()
+    checkboxAccessibilityAndAppearanceTests()
     formattingTests()
     codeTypingTests()
     colourTests()
@@ -41,9 +43,9 @@ private func listTests() {
 
     textView = makeTextView()
     type(textView, "[] task")
-    check(textView.string == "☐ task", "'[] ' becomes a checkbox")
+    check(checklistText(textView) == "☐ task", "'[] ' becomes a checkbox")
     textView.insertNewline(nil)
-    check(textView.string == "☐ task\n☐ ", "Return continues the checklist")
+    check(checklistText(textView) == "☐ task\n☐ ", "Return continues the checklist")
 
     textView = makeTextView()
     type(textView, "```\n- item")
@@ -61,7 +63,7 @@ private func checkboxTests() {
     section("Checkboxes")
     let textView = makeTextView()
     type(textView, "[] buy milk\neggs")
-    check(textView.string == "☐ buy milk\n☐ eggs", "a checklist is set up")
+    check(checklistText(textView) == "☐ buy milk\n☐ eggs", "a checklist is set up")
     guard let layoutManager = textView.layoutManager, let container = textView.textContainer, let window = textView.window else { return }
 
     func click(characterAt index: Int) {
@@ -75,18 +77,126 @@ private func checkboxTests() {
         textView.mouseDown(with: event)
     }
     click(characterAt: 0)
-    check(textView.string == "☑ buy milk\n☐ eggs", "clicking a box checks it")
+    check(checklistText(textView) == "☑ buy milk\n☐ eggs", "clicking a box checks it")
     check(((attribute(textView, "buy", .strikethroughStyle) as? Int) ?? 0) != 0, "a checked item is struck through")
+    check((attribute(textView, "buy", .foregroundColor) as? NSColor) == .secondaryLabelColor, "a checked item's text is dimmed")
     check(attribute(textView, "eggs", .strikethroughStyle) == nil, "other items are untouched")
     click(characterAt: 0)
-    check(textView.string == "☐ buy milk\n☐ eggs" && attribute(textView, "buy", .strikethroughStyle) == nil, "clicking again unchecks it")
+    check(checklistText(textView) == "☐ buy milk\n☐ eggs" && attribute(textView, "buy", .strikethroughStyle) == nil, "clicking again unchecks it")
+    check((attribute(textView, "buy", .foregroundColor) as? NSColor) == NoteTextView.defaultColour, "unchecking restores the normal text colour")
     click(characterAt: 11)
-    check(textView.string == "☐ buy milk\n☑ eggs", "each line's box toggles independently")
+    check(checklistText(textView) == "☐ buy milk\n☑ eggs", "each line's box toggles independently")
     textView.setSelectedRange(NSRange(location: (textView.string as NSString).length, length: 0))
     textView.insertNewline(nil)
     type(textView, "milk")
     let last = (textView.string as NSString).length - 1
     check(textView.textStorage?.attribute(.strikethroughStyle, at: last, effectiveRange: nil) == nil, "a new item after a checked one is not struck through")
+    check((textView.textStorage?.attribute(.foregroundColor, at: last, effectiveRange: nil) as? NSColor) == NoteTextView.defaultColour, "a new item after a checked one is not dimmed")
+}
+
+/// Regression test for the checkbox/text baseline misalignment this app went through
+/// several rounds of fixing by eyeballing screenshots. This renders the *real*
+/// `NoteTextView` to an offscreen bitmap (same as `drawnImageWidth`/`drawnBrightness`
+/// elsewhere in this file) and measures actual ink pixels, rather than trusting any
+/// layout API's claimed position or a human comparing screenshots.
+///
+/// Swept across font sizes (not just the 13pt default) and label words, since a report
+/// of misalignment at some zoom level the single-size test didn't cover is exactly the
+/// kind of thing this is meant to catch before a human has to screenshot it again.
+@MainActor
+private func checkboxAlignmentTests() {
+    section("Checkbox alignment")
+    for fontSize: CGFloat in [8, 13, 17, 24, 32, 48] {
+        for (checked, label, word) in [(false, "unchecked", "test"), (true, "checked", "done")] {
+            assertCheckboxAligned(fontSize: fontSize, checked: checked, label: label, word: word)
+        }
+    }
+}
+
+@MainActor
+private func assertCheckboxAligned(fontSize: CGFloat, checked: Bool, label: String, word: String) {
+    let textView = makeTextView()
+    textView.applyFont(size: fontSize, monospaced: false)
+    type(textView, "[] \(word)")
+    if checked {
+        guard let layoutManager = textView.layoutManager, let container = textView.textContainer, let window = textView.window else {
+            check(false, "checkbox alignment (\(label), \(fontSize)pt): could not set up test view")
+            return
+        }
+        let glyphs = layoutManager.glyphRange(forCharacterRange: NSRange(location: 0, length: 1), actualCharacterRange: nil)
+        let rect = layoutManager.boundingRect(forGlyphRange: glyphs, in: container)
+        let point = NSPoint(x: rect.midX + textView.textContainerOrigin.x, y: rect.midY + textView.textContainerOrigin.y)
+        let event = NSEvent.mouseEvent(
+            with: .leftMouseDown, location: textView.convert(point, to: nil), modifierFlags: [], timestamp: 0,
+            windowNumber: window.windowNumber, context: nil, eventNumber: 0, clickCount: 1, pressure: 1
+        )!
+        textView.mouseDown(with: event)
+    }
+
+    // Character 0 is the checkbox attachment; the word starts at character 2.
+    let boxRect = glyphViewRect(of: textView, characterRange: NSRange(location: 0, length: 1))
+    let textRect = glyphViewRect(of: textView, characterRange: NSRange(location: 2, length: (word as NSString).length))
+    guard let boxInk = drawnInkRowRange(of: textView, xRange: boxRect.minX..<boxRect.maxX),
+          let textInk = drawnInkRowRange(of: textView, xRange: textRect.minX..<textRect.maxX)
+    else {
+        check(false, "checkbox alignment (\(label), \(fontSize)pt): nothing was actually drawn to measure")
+        return
+    }
+    // Row 0 is the top of the bitmap, so the *bottom* edge is the larger row number.
+    // Tolerance is a flat 2px (antialiasing noise) regardless of font size — deliberately
+    // NOT scaled with size, since a size-proportional gap is exactly the bug this test
+    // caught once already (a scaling tolerance would have masked it as "passing").
+    let tolerance = 2
+    let bottomDelta = abs(boxInk.bottom - textInk.bottom)
+    check(bottomDelta <= tolerance, "checkbox (\(label), \(fontSize)pt, \"\(word)\") bottom edge sits on the text baseline (off by \(bottomDelta)px, tolerance \(tolerance): box bottom row \(boxInk.bottom), text bottom row \(textInk.bottom))")
+}
+
+/// Guards two Apple-rules violations found by auditing this app's UI: (1) VoiceOver
+/// must read a meaningful label, never an internal implementation string; (2) a colour
+/// used in both light and dark Appearance mode must be dynamic/semantic, not a fixed
+/// RGB value that's only correct in one of the two.
+@MainActor
+private func checkboxAccessibilityAndAppearanceTests() {
+    section("Checkbox accessibility & appearance")
+    let unchecked = ChecklistBox.attachment(checked: false, font: .systemFont(ofSize: 13))
+    let uncheckedLabel = unchecked.image?.accessibilityDescription ?? ""
+    check(!uncheckedLabel.lowercased().contains("peekie"), "unchecked box's VoiceOver label is not an internal identifier (got \"\(uncheckedLabel)\")")
+    check(uncheckedLabel.first?.isUppercase == true && uncheckedLabel.contains(" "), "unchecked box's VoiceOver label reads as an actual sentence (got \"\(uncheckedLabel)\")")
+
+    let checked = ChecklistBox.attachment(checked: true, font: .systemFont(ofSize: 13))
+    let checkedLabel = checked.image?.accessibilityDescription ?? ""
+    check(!checkedLabel.lowercased().contains("peekie"), "checked box's VoiceOver label is not an internal identifier (got \"\(checkedLabel)\")")
+    check(checkedLabel != uncheckedLabel, "checked and unchecked boxes have distinct VoiceOver labels")
+
+    // NSColor.secondaryLabelColor only resolves to concrete pixels at *draw* time, and
+    // ChecklistBox renders into a plain bitmap once (not a re-drawable dynamic image),
+    // so each appearance needs its own render — reading the same already-rendered
+    // bitmap back under a different appearance wrapper wouldn't change anything.
+    func averagePixel(in appearanceName: NSAppearance.Name) -> (r: CGFloat, g: CGFloat, b: CGFloat)? {
+        guard let appearance = NSAppearance(named: appearanceName) else { return nil }
+        var result: (CGFloat, CGFloat, CGFloat)?
+        appearance.performAsCurrentDrawingAppearance {
+            let box = ChecklistBox.attachment(checked: false, font: .systemFont(ofSize: 13))
+            guard let image = box.image, let tiff = image.tiffRepresentation, let rep = NSBitmapImageRep(data: tiff) else { return }
+            var sumR: CGFloat = 0, sumG: CGFloat = 0, sumB: CGFloat = 0, count: CGFloat = 0
+            for y in 0..<rep.pixelsHigh {
+                for x in 0..<rep.pixelsWide {
+                    guard let colour = rep.colorAt(x: x, y: y), colour.alphaComponent > 0.1 else { continue }
+                    sumR += colour.redComponent; sumG += colour.greenComponent; sumB += colour.blueComponent
+                    count += 1
+                }
+            }
+            guard count > 0 else { return }
+            result = (sumR / count, sumG / count, sumB / count)
+        }
+        return result
+    }
+    if let lightPixel = averagePixel(in: .aqua), let darkPixel = averagePixel(in: .darkAqua) {
+        let changed = abs(lightPixel.r - darkPixel.r) > 0.05 || abs(lightPixel.g - darkPixel.g) > 0.05 || abs(lightPixel.b - darkPixel.b) > 0.05
+        check(changed, "unchecked box's border colour actually differs between light and dark appearance (light=\(lightPixel), dark=\(darkPixel))")
+    } else {
+        check(false, "could not render the checkbox to compare light/dark appearance")
+    }
 }
 
 @MainActor

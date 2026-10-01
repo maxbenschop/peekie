@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-10-01
+
+### Changed
+- Checklist items are now interactive: click a box to check or uncheck it, independent of the rest of the line.
+
+### Added
+- Inline maths results are shown in their own colour, separate from the rest of the line.
+
 ## [1.0.1] - 2026-09-25
 
 ### Changed
@@ -23,5 +31,6 @@ First public release.
 - Keep on top, click-away behaviour (stay, fade or hide), an optional menu bar icon and launch at login.
 - Rebindable shortcuts.
 
+[1.1.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.1.0
 [1.0.1]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.1
 [1.0.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.0
