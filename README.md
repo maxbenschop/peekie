@@ -14,7 +14,7 @@
 
 Peekie is a small, native scratchpad for macOS. Press a shortcut from anywhere and a translucent note floats over whatever you are doing. Type, calculate, paste a snippet, and close it when you are done. Notes are temporary by default, so nothing piles up.
 
-It has no Dock icon, no accounts, no sync, and makes no network connections.
+It has no Dock icon, no accounts, no sync, and makes no network connections on its own.
 
 ## Features
 
@@ -23,7 +23,7 @@ It has no Dock icon, no accounts, no sync, and makes no network connections.
 - Quick capture copies your current selection into a new note (`⌥⇧Space`).
 - One shortcut hides or shows every note (`⌃⌥N`).
 - Notes can stay on top of other windows, fade, or hide when you click away.
-- No Dock icon. An optional menu bar icon is available.
+- No Dock icon. A menu bar icon gives you Settings, Quit and Check for Updates, and you can turn it off.
 
 **A note that looks like glass**
 - Adjustable blur and background opacity, so the window behind the note stays readable.
@@ -90,9 +90,15 @@ Inside a note:
 
 Several of these can be rebound in **Settings > Shortcuts**.
 
+macOS lets several apps register the same global shortcut and does not say which one wins. Alfred also uses `⌥Space` by default, so if you run Alfred, record a different shortcut for Peekie in Settings or change it in Alfred.
+
 ### Getting to Settings and quitting
 
-Peekie has no Dock icon, so open **Settings** by launching Peekie again from Applications, Spotlight or Finder. While Settings is open, the menu bar shows the Peekie menu, where `⌘,` and `⌘Q` work. If you turn on **Show menu bar icon**, it has entries for Settings and Quit.
+Peekie has no Dock icon. The menu bar icon has entries for Settings, Check for Updates and Quit. If you hide the icon, open **Settings** by launching Peekie again from Applications, Spotlight or Finder. While Settings is open, the menu bar shows the Peekie menu, where `⌘,` and `⌘Q` work.
+
+### Updates
+
+Choose **Check for Updates…** from the menu bar icon or the Peekie menu. Peekie asks GitHub for the latest release and offers to open the download page if there is a newer version. It never checks on its own.
 
 ### Settings
 
@@ -100,7 +106,8 @@ Launch at login, keep notes on top, save notes between launches, menu bar icon, 
 
 ## Privacy and permissions
 
-- Peekie makes **no network connections**, has **no analytics**, and stores nothing outside your Mac.
+- Peekie makes **no network connections on its own**, has **no analytics**, and stores nothing outside your Mac. The only network request it ever makes is **Check for Updates…**, which asks GitHub for the latest release when you choose it, and never in the background.
+- **Launch at login** is off until you turn it on in Settings.
 - **Accessibility** access is requested only for quick capture. It sends `⌘C` to the frontmost app to read your selection, then restores your clipboard. Everything else works without it.
 - If you turn on **Save notes between launches**, notes are written **unencrypted** to `~/Library/Application Support/Peekie/Notes`. Closing a note deletes its saved copy. Turning the setting off deletes them all.
 - The adjustable blur uses internal Core Animation layers of the system blur view, which is not a public API. Peekie falls back to a plain fade of the standard blur if a future macOS changes it, and it is why Peekie is not on the Mac App Store. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -138,8 +145,8 @@ Good places to start:
 ## Roadmap
 
 Ideas, not promises:
-- Notarized releases and a Homebrew cask.
-- Automatic updates.
+- Notarized releases and a Homebrew cask. The release workflow already signs and notarizes when the Developer ID secrets are set, see [CONTRIBUTING.md](CONTRIBUTING.md#releasing).
+- Automatic updates, beyond the manual check that exists today.
 - Optional sync between Macs.
 - A note list with search, for people who save notes.
 - Markdown rendering.

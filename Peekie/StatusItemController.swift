@@ -27,6 +27,7 @@ final class StatusItemController: NSObject {
         menu.addItem(item("Reopen Closed Note", #selector(reopenClosedNote)))
         menu.addItem(.separator())
         menu.addItem(item("Settings…", #selector(showSettings)))
+        menu.addItem(item("Check for Updates…", #selector(checkForUpdates)))
         menu.addItem(.separator())
         let quit = NSMenuItem(title: "Quit Peekie", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "")
         menu.addItem(quit)
@@ -43,4 +44,8 @@ final class StatusItemController: NSObject {
     @objc private func toggleNotes() { NoteWindowController.shared.toggleAllNotes() }
     @objc private func reopenClosedNote() { NoteWindowController.shared.reopenLastClosedNote() }
     @objc private func showSettings() { SettingsWindowController.shared.show() }
+    @objc private func checkForUpdates() {
+        NSApp.activate()
+        UpdateChecker.check()
+    }
 }

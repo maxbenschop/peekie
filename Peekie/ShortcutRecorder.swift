@@ -30,7 +30,7 @@ struct ShortcutRecorder: View {
                 recording ? stopRecording() : startRecording()
             }
             .buttonStyle(.bordered)
-            .accessibilityLabel("New note shortcut")
+            .accessibilityLabel(action.title + " shortcut")
         }
         .onDisappear { stopRecording() }
     }

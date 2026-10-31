@@ -22,6 +22,7 @@ Peekie is a small AppKit and SwiftUI app with no third-party dependencies. This 
 | `SettingsView.swift`, `ShortcutRecorder.swift` | The Settings window and shortcut recording |
 | `StatusItemController.swift`, `MenuBarIcon.swift` | The optional menu bar item and its icon |
 | `MenuBuilder.swift`, `LoginItem.swift` | Shared menu items, launch at login |
+| `UpdateChecker.swift` | The manual Check for Updates command |
 
 ## App lifecycle
 
@@ -31,11 +32,13 @@ The main menu is built in code. It is invisible while Peekie is an accessory app
 
 The three configurable in-app shortcuts (`MenuShortcut`) are applied to menu items by identifier, whenever preferences change.
 
-Launching the app from Finder shows Settings. A launch by the login item stays invisible. The login-item check uses the launch Apple event, with a system-uptime fallback.
+Launching the app from Finder shows Settings. A launch by the login item stays invisible. The login-item check uses the launch Apple event, with a system-uptime fallback. The very first launch always shows Settings, whatever the fallback says, so a fresh install right after a restart is not mistaken for a login launch. Peekie never registers itself as a login item; that is the user's choice in Settings.
+
+`UpdateChecker` is the one place that touches the network. It runs only from **Check for Updates…**, asks the GitHub Releases API for the latest tag, compares it with the bundle version and offers the download page.
 
 ## Global shortcuts
 
-Global shortcuts use Carbon's `RegisterEventHotKey`, which needs no Accessibility permission. Each action has its own id, and one event handler dispatches by id. While a shortcut is being recorded in Settings, all global shortcuts are unregistered so that pressing the existing combination is captured instead of triggering it.
+Global shortcuts use Carbon's `RegisterEventHotKey`, which needs no Accessibility permission. Each action has its own id, and one event handler dispatches by id. macOS does not report a conflict when another app has already registered the same combination, so a clash with, say, Alfred's `⌥Space` cannot be detected; Settings and the README point this out instead. While a shortcut is being recorded in Settings, all global shortcuts are unregistered so that pressing the existing combination is captured instead of triggering it.
 
 ## The note window and the blur
 
@@ -118,7 +121,7 @@ The app icon is an Icon Composer document (`AppIcon.icon`) made of two vector la
 
 macOS ties the Accessibility permission to the app's code signature. An ad hoc signature is a hash of the exact binary, so every rebuild loses the permission. Signing with an Apple Development certificate gives a stable identity based on the bundle identifier and certificate, which is why `install.sh` prefers one when it can find it.
 
-Release DMGs are signed ad hoc, so they are not notarized, and macOS asks for a confirmation on first launch.
+Release builds use the hardened runtime. `scripts/make-dmg.sh` signs ad hoc unless `SIGN_IDENTITY` names a Developer ID Application certificate, in which case it also notarizes and staples the app and the DMG when the `NOTARY_*` variables are set. Without those, macOS asks for a confirmation on first launch.
 
 ## Testing
 

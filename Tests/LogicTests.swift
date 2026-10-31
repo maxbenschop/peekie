@@ -8,6 +8,53 @@ func runLogicTests() {
     shortcutTests()
     storeTests()
     menuBarIconTests()
+    updateCheckTests()
+    defaultsTests()
+}
+
+@MainActor
+private func updateCheckTests() {
+    section("Update check")
+    check(UpdateChecker.isNewer("1.2.0", than: "1.1.0"), "a higher minor version is newer")
+    check(UpdateChecker.isNewer("v2.0.0", than: "1.9.9"), "a v prefix is ignored")
+    check(UpdateChecker.isNewer("1.1.1", than: "1.1"), "a missing component counts as zero")
+    check(!UpdateChecker.isNewer("1.1.0", than: "1.1.0"), "the same version is not newer")
+    check(!UpdateChecker.isNewer("1.0.9", than: "1.1.0"), "an older version is not newer")
+    check(UpdateChecker.isNewer("1.2.0-beta.1", than: "1.1.0"), "a pre-release suffix is ignored for ordering")
+    check(!UpdateChecker.isNewer("1.1.0-rc.1", than: "1.1.0"), "a pre-release of the current version is not newer")
+}
+
+@MainActor
+private func defaultsTests() {
+    section("Defaults")
+    check(UserDefaults.standard.bool(forKey: PrefKey.showMenuBarIcon), "the menu bar icon is on by default")
+    check(!UserDefaults.standard.bool(forKey: PrefKey.saveNotes), "notes are temporary by default")
+    check(MathResultContrast.ratio(on: .aqua) >= 4.5, "the maths result colour has enough contrast in light mode")
+    check(MathResultContrast.ratio(on: .darkAqua) >= 4.5, "the maths result colour has enough contrast in dark mode")
+}
+
+private enum MathResultContrast {
+    static func ratio(on name: NSAppearance.Name) -> CGFloat {
+        var result: CGFloat = 0
+        NSAppearance(named: name)?.performAsCurrentDrawingAppearance {
+            let text = NoteTextView.mathResultColour.usingColorSpace(.sRGB)!
+            let tint = name == .darkAqua
+                ? NSColor(red: 0.11, green: 0.12, blue: 0.15, alpha: 1)
+                : NSColor(red: 0.96, green: 0.96, blue: 0.97, alpha: 1)
+            result = contrast(text, tint)
+        }
+        return result
+    }
+
+    private static func luminance(_ colour: NSColor) -> CGFloat {
+        func channel(_ v: CGFloat) -> CGFloat { v <= 0.03928 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4) }
+        return 0.2126 * channel(colour.redComponent) + 0.7152 * channel(colour.greenComponent) + 0.0722 * channel(colour.blueComponent)
+    }
+
+    private static func contrast(_ a: NSColor, _ b: NSColor) -> CGFloat {
+        let (la, lb) = (luminance(a), luminance(b))
+        return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+    }
 }
 
 @MainActor

@@ -16,7 +16,7 @@ swiftc -swift-version 5 -o "$WORK/peekie-tests" Tests/*.swift "${SOURCES[@]}"
 
 "$WORK/peekie-tests" "$SUITE" &
 PID=$!
-( sleep 300; kill "$PID" 2>/dev/null ) &
+( sleep 300; kill "$PID" 2>/dev/null ) </dev/null >/dev/null 2>&1 &
 WATCHDOG=$!
 wait "$PID"
 STATUS=$?
