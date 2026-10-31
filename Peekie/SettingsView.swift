@@ -6,7 +6,7 @@ struct SettingsView: View {
     @AppStorage(PrefKey.appearanceMode) private var appearanceMode = AppearanceMode.dark.rawValue
     @AppStorage(PrefKey.keepNotesOnTop) private var keepNotesOnTop = false
     @AppStorage(PrefKey.saveNotes) private var saveNotes = false
-    @AppStorage(PrefKey.showMenuBarIcon) private var showMenuBarIcon = false
+    @AppStorage(PrefKey.showMenuBarIcon) private var showMenuBarIcon = true
     @AppStorage(PrefKey.clickAwayMode) private var clickAwayMode = ClickAwayMode.keep.rawValue
     @AppStorage(PrefKey.monospacedFont) private var monospaced = false
     @AppStorage(PrefKey.fontSize) private var fontSize = PrefDefault.fontSize
@@ -16,6 +16,20 @@ struct SettingsView: View {
     @State private var launchAtLogin = LoginItem.isEnabled
     @State private var loginError: String?
     @State private var accessibilityTrusted = AXIsProcessTrusted()
+    @State private var confirmDeleteSavedNotes = false
+
+    private var saveNotesBinding: Binding<Bool> {
+        Binding(
+            get: { saveNotes },
+            set: { enabled in
+                if !enabled, NoteStore.shared.hasSavedNotes {
+                    confirmDeleteSavedNotes = true
+                } else {
+                    saveNotes = enabled
+                }
+            }
+        )
+    }
 
     var body: some View {
         Form {
@@ -31,7 +45,15 @@ struct SettingsView: View {
                         }
                     }
                 Toggle("Keep notes on top of other windows", isOn: $keepNotesOnTop)
-                Toggle("Save notes between launches", isOn: $saveNotes)
+                Toggle("Save notes between launches", isOn: saveNotesBinding)
+                    .confirmationDialog(
+                        "Delete your saved notes?", isPresented: $confirmDeleteSavedNotes, titleVisibility: .visible
+                    ) {
+                        Button("Delete Saved Notes", role: .destructive) { saveNotes = false }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("Turning this off deletes every note saved on disk. Open notes stay open until you close them.")
+                    }
                 Toggle("Show menu bar icon", isOn: $showMenuBarIcon)
                 if let loginError {
                     Text(loginError)
@@ -53,14 +75,10 @@ struct SettingsView: View {
             }
 
             Section {
-                LabeledContent("New note (anywhere)") {
-                    ShortcutRecorder(action: .newNote)
-                }
-                LabeledContent("Quick capture selection (anywhere)") {
-                    ShortcutRecorder(action: .captureSelection)
-                }
-                LabeledContent("Show or hide all notes (anywhere)") {
-                    ShortcutRecorder(action: .toggleNotes)
+                ForEach(HotKeyAction.allCases, id: \.self) { action in
+                    LabeledContent(action.title + " (anywhere)") {
+                        ShortcutRecorder(action: action)
+                    }
                 }
                 if !accessibilityTrusted {
                     VStack(alignment: .leading, spacing: 8) {
@@ -85,7 +103,7 @@ struct SettingsView: View {
             } header: {
                 Text("Shortcuts")
             } footer: {
-                Text("Shortcuts marked (anywhere) work from any app. The others work while a note is active.")
+                Text("Shortcuts marked (anywhere) work from any app. The others work while a note is active. If another app already uses one of these combinations, such as Alfred with ⌥Space, record a different one here or change it in that app.")
             }
 
             Section("Appearance") {

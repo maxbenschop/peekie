@@ -12,7 +12,7 @@ Include what you found, how to reproduce it and the Peekie and macOS versions in
 
 ## Things to know
 
-- Peekie makes no network connections.
+- Peekie makes no network connections on its own. **Check for Updates…** contacts the GitHub Releases API only when you choose it.
 - With **Save notes between launches** on, notes are stored unencrypted in `~/Library/Application Support/Peekie/Notes`, readable by your user account.
 - Quick capture needs the Accessibility permission. It only sends `⌘C` to the frontmost app and restores your clipboard afterwards.
 - The adjustable blur reaches into internal Core Animation layers. It cannot access your data, but it may stop working on a future macOS version, in which case Peekie falls back to a plain fade.

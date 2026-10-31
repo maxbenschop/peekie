@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **Check for Updates…** in the menu bar icon and the Peekie menu. It asks GitHub for the latest release only when you choose it.
+- A confirmation before saved notes are deleted when **Save notes between launches** is turned off.
+
+### Changed
+- The menu bar icon is on by default. It is the easiest way to reach Settings and quit.
+- The first launch always opens Settings, even right after a restart.
+- Settings and the README mention that Alfred also uses `⌥Space`, and how to pick a different shortcut.
+- Peekie no longer turns on **Launch at login** by itself. Turn it on in Settings if you want it.
+- The inline maths result colour now adapts to light mode so it stays readable.
+- Release builds use the hardened runtime, and the release workflow signs and notarizes when Developer ID secrets are configured.
+- The About panel shows a copyright line.
+
+### Fixed
+- VoiceOver read every global shortcut button as "New note shortcut".
+- `scripts/test.sh` kept the pipe open for five minutes after the tests finished when its output was captured.
+
 ## [1.1.0] - 2026-10-01
 
 ### Changed
@@ -31,6 +50,7 @@ First public release.
 - Keep on top, click-away behaviour (stay, fade or hide), an optional menu bar icon and launch at login.
 - Rebindable shortcuts.
 
+[Unreleased]: https://github.com/maxbenschop/peekie/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.1.0
 [1.0.1]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.1
 [1.0.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.0

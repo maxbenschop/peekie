@@ -12,7 +12,7 @@ enum PrefKey {
     static let clickAwayMode = "clickAwayMode"
     static let monospacedFont = "monospacedFont"
     static let fontSize = "fontSize"
-    static let didSetUpLoginItem = "didSetUpLoginItem"
+    static let didCompleteFirstLaunch = "didCompleteFirstLaunch"
 }
 
 enum PrefDefault {
@@ -28,7 +28,7 @@ enum PrefDefault {
             PrefKey.appearanceMode: AppearanceMode.dark.rawValue,
             PrefKey.keepNotesOnTop: false,
             PrefKey.saveNotes: false,
-            PrefKey.showMenuBarIcon: false,
+            PrefKey.showMenuBarIcon: true,
             PrefKey.clickAwayMode: ClickAwayMode.keep.rawValue,
             PrefKey.monospacedFont: false,
             PrefKey.fontSize: fontSize,
@@ -74,6 +74,14 @@ enum HotKeyAction: Int, CaseIterable {
         }
     }
     var defaultLabel: String { self == .toggleNotes ? "N" : "Space" }
+
+    var title: String {
+        switch self {
+        case .newNote: return "New note"
+        case .captureSelection: return "Quick capture selection"
+        case .toggleNotes: return "Show or hide all notes"
+        }
+    }
 
     var storedCode: Int { UserDefaults.standard.integer(forKey: codeKey) }
     var storedModifiers: Int { UserDefaults.standard.integer(forKey: modifiersKey) }

@@ -31,14 +31,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        enableLaunchAtLoginOnFirstRun()
-
         StatusItemController.shared.update()
         NoteWindowController.shared.restoreSavedNotes()
 
-        if !Self.launchedAtLogin {
+        let defaults = UserDefaults.standard
+        let firstLaunch = !defaults.bool(forKey: PrefKey.didCompleteFirstLaunch)
+        if firstLaunch || !Self.launchedAtLogin {
             SettingsWindowController.shared.show()
         }
+        defaults.set(true, forKey: PrefKey.didCompleteFirstLaunch)
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -66,6 +67,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         SettingsWindowController.shared.show()
     }
 
+    @objc private func checkForUpdates() {
+        NSApp.activate()
+        UpdateChecker.check()
+    }
+
     private func applyAppearance() {
         let appearance = AppearanceMode.stored.appearance
 
@@ -85,13 +91,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         if let main = NSApp.mainMenu { apply(to: main) }
-    }
-
-    private func enableLaunchAtLoginOnFirstRun() {
-        let defaults = UserDefaults.standard
-        guard !defaults.bool(forKey: PrefKey.didSetUpLoginItem) else { return }
-        defaults.set(true, forKey: PrefKey.didSetUpLoginItem)
-        try? LoginItem.setEnabled(true)
     }
 
     private static var launchedAtLogin: Bool {
@@ -116,6 +115,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let appMenu = NSMenu(title: name)
         appMenu.addItem(withTitle: "About \(name)", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        let updates = appMenu.addItem(withTitle: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
+        updates.target = self
         appMenu.addItem(.separator())
         let settings = appMenu.addItem(withTitle: "Settings…", action: #selector(showSettings), keyEquivalent: ",")
         settings.target = self

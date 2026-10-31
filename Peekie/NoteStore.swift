@@ -29,6 +29,11 @@ final class NoteStore {
 
     var isEnabled: Bool { UserDefaults.standard.bool(forKey: PrefKey.saveNotes) }
 
+    var hasSavedNotes: Bool {
+        let files = (try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
+        return files.contains { $0.pathExtension == "note" }
+    }
+
     private func noteURL(_ id: UUID) -> URL { directory.appendingPathComponent(id.uuidString + ".note") }
     private func metaURL(_ id: UUID) -> URL { directory.appendingPathComponent(id.uuidString + ".json") }
 

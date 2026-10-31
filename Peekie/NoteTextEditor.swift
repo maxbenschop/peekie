@@ -13,7 +13,12 @@ final class NoteTextView: NSTextView {
     ]
 
     static let defaultColour = NSColor.labelColor
-    static let mathResultColour = NSColor(red: 0xA9 / 255, green: 0xA3 / 255, blue: 0xF0 / 255, alpha: 1)
+    static let mathResultColour = NSColor(name: "mathResult") { appearance in
+        let dark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        return dark
+            ? NSColor(red: 0xA9 / 255, green: 0xA3 / 255, blue: 0xF0 / 255, alpha: 1)
+            : NSColor(red: 0x4B / 255, green: 0x40 / 255, blue: 0xB0 / 255, alpha: 1)
+    }
 
     private static let bullet = "•"
 

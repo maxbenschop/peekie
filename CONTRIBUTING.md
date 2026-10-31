@@ -93,3 +93,21 @@ Please report security problems privately. See [SECURITY.md](SECURITY.md).
 ## License
 
 By contributing, you agree that your contributions are licensed under the [MIT License](LICENSE).
+
+## Releasing
+
+1. Update `MARKETING_VERSION` in the project and add a dated section to `CHANGELOG.md`.
+2. Tag the commit `vX.Y.Z` and push the tag. The release workflow builds the DMG, writes the checksum and publishes the GitHub release.
+
+The workflow signs ad hoc unless these repository secrets are set, in which case it signs with the Developer ID certificate and notarizes the app and the DMG:
+
+| Secret | Contents |
+| --- | --- |
+| `APPLE_DEVELOPER_ID_P12` | The Developer ID Application certificate and key, exported as `.p12` and base64 encoded |
+| `APPLE_DEVELOPER_ID_P12_PASSWORD` | The password of that `.p12` |
+| `APPLE_SIGN_IDENTITY` | The certificate name, for example `Developer ID Application: Max Benschop (TEAMID)` |
+| `APPLE_ID` | The Apple ID of the developer account |
+| `APPLE_TEAM_ID` | The ten-character team id |
+| `APPLE_APP_PASSWORD` | An app-specific password for that Apple ID |
+
+Locally, `SIGN_IDENTITY="Developer ID Application: …" NOTARY_APPLE_ID=… NOTARY_TEAM_ID=… NOTARY_PASSWORD=… ./scripts/make-dmg.sh` does the same.
