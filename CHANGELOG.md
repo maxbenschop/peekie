@@ -4,7 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-13
+
 ### Added
+- Releases are signed with a Developer ID and notarized by Apple, so the downloaded app opens without a Gatekeeper warning or a trip to System Settings.
 - **Check for Updates…** in the menu bar icon and the Peekie menu. It asks GitHub for the latest release only when you choose it.
 - A confirmation before saved notes are deleted when **Save notes between launches** is turned off.
 
@@ -14,7 +17,8 @@ All notable changes to this project are documented here. The format follows [Kee
 - Settings and the README mention that Alfred also uses `⌥Space`, and how to pick a different shortcut.
 - Peekie no longer turns on **Launch at login** by itself. Turn it on in Settings if you want it.
 - The inline maths result colour now adapts to light mode so it stays readable.
-- Release builds use the hardened runtime, and the release workflow signs and notarizes when Developer ID secrets are configured.
+- Release builds use the hardened runtime and no longer carry the `get-task-allow` debugging entitlement, which Apple's notary service rejects.
+- Because the signature changed, macOS asks once more for the Accessibility permission that quick capture uses.
 - The About panel shows a copyright line.
 
 ### Fixed
@@ -50,7 +54,8 @@ First public release.
 - Keep on top, click-away behaviour (stay, fade or hide), an optional menu bar icon and launch at login.
 - Rebindable shortcuts.
 
-[Unreleased]: https://github.com/maxbenschop/peekie/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/maxbenschop/peekie/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.2.0
 [1.1.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.1.0
 [1.0.1]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.1
 [1.0.0]: https://github.com/maxbenschop/peekie/releases/tag/v1.0.0

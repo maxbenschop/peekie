@@ -51,15 +51,9 @@ It has no Dock icon, no accounts, no sync, and makes no network connections on i
 
 **Requirements:** macOS 14 Sonoma or later, Apple Silicon or Intel. Peekie is developed on the newest macOS. Earlier versions should work but get less testing, so please report anything odd.
 
-### "Peekie can't be opened"
+Releases from 1.2.0 on are signed with a Developer ID and notarized by Apple, so Peekie opens like any other downloaded app, with no trip to **System Settings**. Every release also lists a SHA-256 checksum so you can verify the download, and you can always [build it yourself](#build-from-source).
 
-Release builds are not notarized yet, because that needs a paid Apple Developer ID. macOS therefore asks you to confirm the first launch:
-
-1. Right-click **Peekie** in Applications and choose **Open**, then click **Open** again.
-2. If macOS still refuses, open **System Settings > Privacy & Security** and click **Open Anyway**.
-3. Or run this in Terminal: `xattr -dr com.apple.quarantine /Applications/Peekie.app`
-
-You only need to do this once. Every release lists a SHA-256 checksum so you can verify the download, and you can always [build it yourself](#build-from-source).
+**Upgrading from 1.1.0 or earlier?** Those builds had a different signature, so macOS asks for the Accessibility permission (used by quick capture) once more. If quick capture stays silent, remove the old **Peekie** entry in **System Settings > Privacy & Security > Accessibility** and add it again.
 
 ## Using Peekie
 
@@ -145,7 +139,7 @@ Good places to start:
 ## Roadmap
 
 Ideas, not promises:
-- Notarized releases and a Homebrew cask. The release workflow already signs and notarizes when the Developer ID secrets are set, see [CONTRIBUTING.md](CONTRIBUTING.md#releasing).
+- A Homebrew cask.
 - Automatic updates, beyond the manual check that exists today.
 - Optional sync between Macs.
 - A note list with search, for people who save notes.

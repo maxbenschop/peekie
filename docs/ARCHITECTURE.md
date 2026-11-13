@@ -121,7 +121,7 @@ The app icon is an Icon Composer document (`AppIcon.icon`) made of two vector la
 
 macOS ties the Accessibility permission to the app's code signature. An ad hoc signature is a hash of the exact binary, so every rebuild loses the permission. Signing with an Apple Development certificate gives a stable identity based on the bundle identifier and certificate, which is why `install.sh` prefers one when it can find it.
 
-Release builds use the hardened runtime. `scripts/make-dmg.sh` signs ad hoc unless `SIGN_IDENTITY` names a Developer ID Application certificate, in which case it also notarizes and staples the app and the DMG when the `NOTARY_*` variables are set. Without those, macOS asks for a confirmation on first launch.
+Release builds use the hardened runtime and turn off `CODE_SIGN_INJECT_BASE_ENTITLEMENTS`, because the `get-task-allow` entitlement Xcode would otherwise add makes notarization fail. `scripts/make-dmg.sh` signs ad hoc unless `SIGN_IDENTITY` names a Developer ID Application certificate. With notary credentials as well, it notarizes and staples the app and the DMG, then checks both with `spctl` so a build Gatekeeper would refuse never gets published. In CI it refuses to build a signed DMG without notary credentials.
 
 ## Testing
 
