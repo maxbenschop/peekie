@@ -110,4 +110,6 @@ The workflow signs ad hoc unless these repository secrets are set, in which case
 | `APPLE_TEAM_ID` | The ten-character team id |
 | `APPLE_APP_PASSWORD` | An app-specific password for that Apple ID |
 
-Locally, `SIGN_IDENTITY="Developer ID Application: …" NOTARY_APPLE_ID=… NOTARY_TEAM_ID=… NOTARY_PASSWORD=… ./scripts/make-dmg.sh` does the same.
+Locally, `SIGN_IDENTITY="Developer ID Application: …" NOTARY_APPLE_ID=… NOTARY_TEAM_ID=… NOTARY_PASSWORD=… ./scripts/make-dmg.sh` does the same. If you saved the credentials with `xcrun notarytool store-credentials <profile>`, pass `NOTARY_PROFILE=<profile>` instead of the three `NOTARY_*` values.
+
+Notarization fails with HTTP 403 when an agreement has lapsed. The Account Holder fixes that under **App Store Connect > Business > Agreements**.
